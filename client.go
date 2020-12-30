@@ -11,21 +11,21 @@ import (
 
 var client = http.Client{}
 
-func callBoth(ctx context.Context, errVal string) {
+func callBoth(ctx context.Context, errVal string, slowURL string, fastURL string) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 	var wg sync.WaitGroup
 	wg.Add(2)
 	go func() {
 		defer wg.Done()
-		err := callServer(ctx, "slow", "http://localhost:8080")
+		err := callServer(ctx, "slow", slowURL)
 		if err != nil {
 			cancel()
 		}
 	}()
 	go func() {
 		defer wg.Done()
-		err := callServer(ctx, "fast", "http://localhost:9090?error="+errVal)
+		err := callServer(ctx, "fast", fastURL+"?error="+errVal)
 		if err != nil {
 			cancel()
 		}
